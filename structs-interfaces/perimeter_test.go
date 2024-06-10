@@ -1,6 +1,8 @@
 package structsinterfaces
 
-import "testing"
+import (
+	"testing"
+)
 
 var rectangle = Rectangle{10.0, 10.0}
 var circle = Circle{10.0}
@@ -32,21 +34,19 @@ func TestPerimeter(t *testing.T) {
 
 func TestArea(t *testing.T) {
 
-	checkArea := func (t testing.TB, shape Shape, want float64)  {
-		t.Helper()
-		got := shape.Area()
-		if got != want {
-			t.Errorf("got %g want %g", got, want)
-		}
+	areaTests := []struct {
+		shape Shape
+		want float64
+	} {
+		{rectangle, rectangleArea},
+		{circle, circleArea},
+		{Triangle{3,4}, 6.0},
 	}
 
-	t.Run("rectangles", func(t *testing.T) {
-		checkArea(t, rectangle, rectangleArea)
-	})
-
-	t.Run("circles", func(t *testing.T) {
-		checkArea(t, circle, circleArea)
-	})
+	for _, sut := range areaTests {
+		got := sut.shape.Area()
+		if got != sut.want {
+			t.Errorf("got %g want %g", got, sut.want)
+		}
+	}
 }
-
-// https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/structs-methods-and-interfaces#refactor-1
