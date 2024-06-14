@@ -17,6 +17,15 @@ func TestSearch(t *testing.T) {
 	})
 }
 
+func TestAdd(t *testing.T) {
+	dictionary := Dictionary{}
+	dictionary.Add("test", "this is just a test")
+
+	got, _ := dictionary.Search("test")
+	want := "this is just a test"
+	assertStrings(t, got, want)
+}
+
 func assertStrings(t testing.TB, got string, want string) {
 	t.Helper()
 
