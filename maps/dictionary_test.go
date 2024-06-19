@@ -1,6 +1,10 @@
 package maps
 
 import "testing"
+const( 
+	testWord = "test"
+	testDefinition = "this is just a test"
+)
 
 func TestSearch(t *testing.T) {
 	dictionary := Dictionary{"test": "this is just a test"}
@@ -18,19 +22,35 @@ func TestSearch(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	word := "test"
-	definition := "this is just a test"
+
 	t.Run("Adding new word", func(t *testing.T) {
 		dictionary := Dictionary{}
-		err := dictionary.Add(word, definition)
+		err := dictionary.Add(testWord, testDefinition)
 		assertError(t, err, nil)
-		AssertDefinition(t, dictionary, word, definition)
+		assertDefinition(t, dictionary, testWord, testDefinition)
 	})
 
 	t.Run("Adding existing word", func(t *testing.T) {
-		dictionary := Dictionary{word:definition}
-		err := dictionary.Add(word, "new definition")
+		dictionary := Dictionary{testWord:testDefinition}
+		err := dictionary.Add(testWord, "new definition")
 		assertError(t, err, ErrWordExists)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	newDefinition := "new definition"
+
+	t.Run("Existing word", func(t *testing.T) {
+		dictionary := Dictionary{testWord:testDefinition}
+		err := dictionary.Edit(testWord, newDefinition)
+		assertError(t, err, nil)
+		assertDefinition(t, dictionary, testWord, newDefinition)
+	})
+
+	t.Run("new word", func(t *testing.T) {
+		dictionary := Dictionary{}
+		err := dictionary.Edit(testWord, newDefinition)
+		assertError(t, err, ErrWordNotExists)
 	})
 }
 
@@ -50,7 +70,7 @@ func assertError(t testing.TB, got, want error) {
 	}
 }
 
-func AssertDefinition(t testing.TB, dictionary Dictionary, word, definition string) {
+func assertDefinition(t testing.TB, dictionary Dictionary, word, definition string) {
 	t.Helper()
 
 	got, err := dictionary.Search(word)
